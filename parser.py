@@ -3,10 +3,11 @@ from bs4 import BeautifulSoup
 
 def pokemonScrape(content):
     pokemon = {}
+    
     name = content.find("h1", class_="product_title").text
     sku = content.find("span", class_="sku").text
     in_stock = content.find("p", class_="stock").text
-    price = content.find("p", class_="price").text.strip("£")
+    price = (content.find("p", class_="price").text.strip("£"))
     pokemon["name"] = name
     pokemon["sku"] = sku
     pokemon["in_stock"] = in_stock
@@ -39,12 +40,10 @@ def bookScrape(content):
 
     knjiga = {}
     knjiga["title"] = content.find("h1").text
-    #podaci["price"] = content.find("p", {"class": "price_color"}).text
     knjiga["UPC"] = (columns[0]).text
     price_text = (columns[2]).text
     price_text = price_text.lstrip("£")
     knjiga["price"] = price_text
     knjiga["tax"] = (columns[4]).text[1:]
     knjiga["in_stock"] = (columns[5]).text
-    print("running...")
     return knjiga
