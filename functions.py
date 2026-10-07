@@ -13,6 +13,9 @@ def scrape_function(url):
     elif "books.toscrape.com" in url:
         content = bookScrape(content)
     else:
-        return content.text
+        return {
+            "title": content.title.text.strip() if content.title else None,
+            "text": content.get_text(separator=" ", strip=True)[:1000]
+        }
     return content
 
