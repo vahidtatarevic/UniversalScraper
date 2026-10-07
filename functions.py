@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from parser import pokemonScrape, carScrape, bookScrape
 
 
-def scrape_function(url):
+def scrapeFunction(url):
     response = requests.get(url, impersonate="chrome", timeout = 60)
     content = BeautifulSoup(response.text, "html.parser")
     if "scrapeme.live" in url:

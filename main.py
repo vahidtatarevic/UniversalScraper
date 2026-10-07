@@ -1,15 +1,15 @@
 from fastapi import FastAPI
-from functions import scrape_function
+from functions import scrapeFunction
 from fastapi import HTTPException
 app = FastAPI()
 
-@app.get("/scrape/")
+@app.get("/scrape")
 def scrape(url: str):
     if not url.startswith(("http://", "https://")):
         raise HTTPException(status_code=400, detail="URL must start with http:// or https://")
 
     try:
-        response = scrape_function(url)
+        response = scrapeFunction(url)
     except Exception:
         raise HTTPException(status_code=502, detail="Failed to scrape the page.")
 
