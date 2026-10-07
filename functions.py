@@ -15,7 +15,7 @@ def scrape_function(url):
     else:
         return {
             "title": content.title.text.strip() if content.title else None,
-            "text": content.get_text(separator=" ", strip=True)[:1000]
+            "text": content.get_text(separator=" ", strip=True)
         }
     return content
 
