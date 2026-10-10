@@ -19,7 +19,7 @@ def login(form: OAuth2PasswordRequestForm = Depends(), session : Session = Depen
     if not user or not passwordHash.verify(form.password, user.hashedPassword):
         raise HTTPException(status_code=401, detail="Invalid username or password")
     token = jwt.encode({"sub": user.username}, SECRET, algorithm="HS256")
-    return {"access_token": token, "token_type": "bearer"}
+    return ("Login successful", {"access_token": token, "token_type": "bearer"})
 
 
 @app.post("/signup")
