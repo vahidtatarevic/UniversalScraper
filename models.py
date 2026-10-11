@@ -6,6 +6,5 @@ class User(SQLModel, table=True):
     hashedPassword: str
 
 class UserCreate(SQLModel):
-    id: int = Field(default=None, primary_key=True)
     username: str
     password: str
