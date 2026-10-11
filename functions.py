@@ -18,4 +18,3 @@ def scrapeFunction(url):
             "text": content.get_text(separator=" ", strip=True)
         }
     return content
-
