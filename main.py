@@ -46,7 +46,8 @@ def signup(data: UserCreate, session: Session = Depends(getSession)):
     session.add(user)
     session.commit()
     session.refresh(user)
-    return {"message": "User registered successfully"}
+    token = jwt.encode({"sub": user.username, "exp": datetime.now(timezone.utc) + timedelta(minutes=30)}, SECRET, algorithm="HS256")
+    return {"message": "User registered successfully", "access_token": token, "token_type": "bearer"}
 
 
 def currentUser(token: str = Depends(oauth2Scheme)):
