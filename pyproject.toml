@@ -17,5 +17,12 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest",
-    "httpx",
+    "httpx2>=2.16.0",
+    "ruff>=0.17.2",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
+[tool.ruff.lint]
+extend-select = ["I"]

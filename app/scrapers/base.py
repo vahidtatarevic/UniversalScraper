@@ -1,10 +1,11 @@
-from curl_cffi import requests
 from bs4 import BeautifulSoup
-from parser import pokemonScrape, carScrape, bookScrape
+from curl_cffi import requests
+
+from app.scrapers.parser import bookScrape, carScrape, pokemonScrape
 
 
 def scrapeFunction(url):
-    response = requests.get(url, impersonate="chrome", timeout = 60)
+    response = requests.get(url, impersonate="chrome", timeout=60)
     content = BeautifulSoup(response.text, "html.parser")
     if "scrapeme.live" in url:
         content = pokemonScrape(content)
@@ -15,6 +16,6 @@ def scrapeFunction(url):
     else:
         return {
             "title": content.title.text.strip() if content.title else None,
-            "text": content.get_text(separator=" ", strip=True)
+            "text": content.get_text(separator=" ", strip=True),
         }
     return content

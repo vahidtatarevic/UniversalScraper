@@ -1,0 +1,28 @@
+from typing import Annotated
+
+from curl_cffi.requests.exceptions import RequestException
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.auth import currentUser
+from app.scrapers.base import scrapeFunction
+
+router = APIRouter()
+
+
+@router.get("/scrape")
+def scrape(url: str, username: Annotated[str, Depends(currentUser)]):
+    if not url.startswith(("http://", "https://")):
+        raise HTTPException(
+            status_code=400, detail="URL must start with http:// or https://"
+        )
+
+    try:
+        response = scrapeFunction(url)
+    except RequestException:
+        raise HTTPException(status_code=502, detail="Failed to fetch the page.")
+    except (AttributeError, IndexError, ValueError, TypeError):
+        raise HTTPException(status_code=422, detail="Page structure not recognised.")
+
+    if not response:
+        raise HTTPException(status_code=404, detail="No data found.")
+    return response
