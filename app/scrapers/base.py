@@ -17,8 +17,5 @@ def scrapeFunction(url, output="json"):
     elif "books.toscrape.com" in url:
         content = bookScrape(content)
     else:
-        return {
-            "title": content.title.text.strip() if content.title else None,
-            "text": content.get_text(separator=" ", strip=True),
-        }
+        return response.text
     return content

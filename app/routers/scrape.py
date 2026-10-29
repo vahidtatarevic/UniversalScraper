@@ -30,6 +30,6 @@ def scrape(
 
     if not response:
         raise HTTPException(status_code=404, detail="No data found.")
-    if output == "html":
+    if isinstance(response, str):
         return HTMLResponse(response)
     return response
