@@ -4,8 +4,8 @@ from curl_cffi.requests.exceptions import RequestException
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 
-from app.auth import currentUser
-from app.scrapers.base import scrapeFunction
+from app.auth import current_user
+from app.scrapers.base import scrape_function
 
 router = APIRouter()
 
@@ -13,7 +13,7 @@ router = APIRouter()
 @router.get("/scrape")
 def scrape(
     url: str,
-    username: Annotated[str, Depends(currentUser)],
+    username: Annotated[str, Depends(current_user)],
     output: Literal["json", "html"] = "json",
 ):
     if not url.startswith(("http://", "https://")):
@@ -22,7 +22,7 @@ def scrape(
         )
 
     try:
-        response = scrapeFunction(url, output)
+        response = scrape_function(url, output)
     except RequestException:
         raise HTTPException(status_code=502, detail="Failed to fetch the page.")
     except (AttributeError, IndexError, ValueError, TypeError):

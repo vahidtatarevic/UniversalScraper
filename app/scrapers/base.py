@@ -3,10 +3,10 @@ from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from curl_cffi import requests
 
-from app.scrapers.parser import bookScrape, carScrape, pokemonScrape
+from app.scrapers.parser import book_scrape, car_scrape, pokemon_scrape
 
 
-def scrapeFunction(url, output="json"):
+def scrape_function(url, output="json"):
     response = requests.get(url, impersonate="chrome", timeout=60)
     domain = urlparse(url).hostname
     if output == "html":
@@ -14,11 +14,11 @@ def scrapeFunction(url, output="json"):
     content = BeautifulSoup(response.text, "html.parser")
 
     if domain == "scrapeme.live":
-        content = pokemonScrape(content)
+        content = pokemon_scrape(content)
     elif domain == "webscraper.io":
-        content = carScrape(content)
+        content = car_scrape(content)
     elif domain == "books.toscrape.com":
-        content = bookScrape(content)
+        content = book_scrape(content)
     else:
         return response.text
     return content

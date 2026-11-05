@@ -8,16 +8,16 @@ from pwdlib import PasswordHash
 
 from app.config import SECRET
 
-oauth2Scheme = OAuth2PasswordBearer(tokenUrl="login")
-passwordHash = PasswordHash.recommended()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+password_hash = PasswordHash.recommended()
 
 
-def createToken(username):
+def create_token(username):
     expires = datetime.now(UTC) + timedelta(minutes=30)
     return jwt.encode({"sub": username, "exp": expires}, SECRET, algorithm="HS256")
 
 
-def currentUser(token: Annotated[str, Depends(oauth2Scheme)]):
+def current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     try:
         return jwt.decode(token, SECRET, algorithms=["HS256"])["sub"]
     except jwt.InvalidTokenError:

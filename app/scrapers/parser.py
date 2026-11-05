@@ -1,4 +1,4 @@
-def pokemonScrape(content):
+def pokemon_scrape(content):
     pokemon = {}
 
     name = content.find("h1", class_="product_title").text
@@ -12,7 +12,7 @@ def pokemonScrape(content):
     return pokemon
 
 
-def carScrape(content):
+def car_scrape(content):
     car = {}
 
     car["name"] = content.find("h2", class_="title").text
@@ -43,7 +43,7 @@ def carScrape(content):
     return car
 
 
-def bookScrape(content):
+def book_scrape(content):
     table = content.find("table", {"class": "table-striped"})
     columns = table.find_all("td")
 
