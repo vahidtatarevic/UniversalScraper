@@ -1,12 +1,26 @@
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, UniqueConstraint
 
 
 class User(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     username: str = Field(index=True, unique=True)
-    hashed_password: str
+    email: str | None = Field(default=None, unique=True)
+    hashed_password: str | None = None
+
+
+class UserIdentity(SQLModel, table=True):
+    __table_args__ = (UniqueConstraint("provider", "provider_id"),)
+
+    id: int = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    provider: str
+    provider_id: str
 
 
 class UserCreate(SQLModel):
-    username: str
-    password: str
+    username: str = Field(pattern=r"[a-zA-Z0-9_]+$", min_length=3, max_length=30)
+    password: str = Field(min_length=8, max_length=128)
+
+
+class GoogleLogin(SQLModel):
+    token: str

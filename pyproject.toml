@@ -12,6 +12,8 @@ dependencies = [
     "beautifulsoup4",
     "curl_cffi",
     "python-multipart>=0.0.32",
+    "google-auth>=2.62.2",
+    "requests>=2.34.2",
 ]
 
 [dependency-groups]

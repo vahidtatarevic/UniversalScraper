@@ -4,3 +4,4 @@ from dotenv import load_dotenv
 
 load_dotenv()
 SECRET = os.environ["SECRET_KEY"]
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
