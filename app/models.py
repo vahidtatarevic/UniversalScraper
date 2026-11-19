@@ -18,7 +18,11 @@ class UserIdentity(SQLModel, table=True):
 
 
 class UserCreate(SQLModel):
-    username: str = Field(pattern=r"[a-zA-Z0-9_]+$", min_length=3, max_length=30)
+    username: str = Field(
+        min_length=3,
+        max_length=30,
+        schema_extra={"pattern": r"^[a-zA-Z0-9_]+$"},
+    )
     password: str = Field(min_length=8, max_length=128)
 
 
