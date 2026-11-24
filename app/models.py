@@ -1,3 +1,4 @@
+from pydantic import EmailStr
 from sqlmodel import Field, SQLModel, UniqueConstraint
 
 
@@ -6,6 +7,7 @@ class User(SQLModel, table=True):
     username: str = Field(index=True, unique=True)
     email: str | None = Field(default=None, unique=True)
     hashed_password: str | None = None
+    is_verified: bool = False
 
 
 class UserIdentity(SQLModel, table=True):
@@ -23,8 +25,13 @@ class UserCreate(SQLModel):
         max_length=30,
         schema_extra={"pattern": r"^[a-zA-Z0-9_]+$"},
     )
+    email: EmailStr
     password: str = Field(min_length=8, max_length=128)
 
 
 class GoogleLogin(SQLModel):
     token: str
+
+
+class ResendVerification(SQLModel):
+    email: EmailStr
