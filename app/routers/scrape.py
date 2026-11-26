@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 
 from app.auth import current_user
 from app.scrapers.base import scrape_function
+from app.scrapers.safety import is_public_url
 
 router = APIRouter()
 
@@ -20,7 +21,8 @@ def scrape(
         raise HTTPException(
             status_code=400, detail="URL must start with http:// or https://"
         )
-
+    if not is_public_url(url):
+        raise HTTPException(status_code=400, detail="URL is not allowed.")
     try:
         response = scrape_function(url, output)
     except RequestException:

@@ -86,3 +86,14 @@ def test_rejects_url_without_http(client, sent_emails):
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 400
+
+
+def test_rejects_internal_url(client, sent_emails):
+    signup_and_verify(client, sent_emails)
+    token = client.post("/login", data=LOGIN).json()["access_token"]
+    response = client.get(
+        "/scrape",
+        params={"url": "http://169.254.169.254/latest/meta-data/"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 400
