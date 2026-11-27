@@ -1,14 +1,14 @@
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
-from curl_cffi import requests
 
 from app.scrapers.json_ld import extract_json_ld
 from app.scrapers.parser import book_scrape, car_scrape, pokemon_scrape
+from app.scrapers.safety import fetch
 
 
 def scrape_function(url, output="json"):
-    response = requests.get(url, impersonate="chrome", timeout=60)
+    response = fetch(url)
     domain = urlparse(url).hostname
     if output == "html":
         return response.text

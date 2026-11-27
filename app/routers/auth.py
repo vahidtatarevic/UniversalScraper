@@ -1,7 +1,7 @@
 from typing import Annotated
 
 import jwt
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
@@ -10,6 +10,7 @@ from sqlmodel import select
 from app.auth import create_token, decode_token, password_hash
 from app.config import GOOGLE_CLIENT_ID
 from app.database import SessionDep
+from app.limiter import limiter
 from app.mailer import send_verification_email
 from app.models import (
     GoogleLogin,
@@ -25,7 +26,13 @@ router = APIRouter()
 
 
 @router.post("/signup")
-def signup(data: UserCreate, session: SessionDep, background_tasks: BackgroundTasks):
+@limiter.limit("5/hour")
+def signup(
+    request: Request,
+    data: UserCreate,
+    session: SessionDep,
+    background_tasks: BackgroundTasks,
+):
     existing = session.exec(select(User).where(User.username == data.username)).first()
     if existing:
         raise HTTPException(status_code=400, detail="Username already exists")
@@ -52,7 +59,8 @@ def send_verification_link(user, background_tasks):
 
 
 @router.get("/verify")
-def verify_email(token: str, session: SessionDep):
+@limiter.limit("10/minute")
+def verify_email(request: Request, token: str, session: SessionDep):
     # One message for every failure, so the response never reveals whether
     # an account exists.
     invalid = HTTPException(
@@ -75,8 +83,12 @@ def verify_email(token: str, session: SessionDep):
 
 
 @router.post("/resend-verification")
+@limiter.limit("3/hour")
 def resend_verification(
-    data: ResendVerification, session: SessionDep, background_tasks: BackgroundTasks
+    request: Request,
+    data: ResendVerification,
+    session: SessionDep,
+    background_tasks: BackgroundTasks,
 ):
     user = session.exec(select(User).where(User.email == data.email)).first()
     if user and not user.is_verified:
@@ -85,7 +97,9 @@ def resend_verification(
 
 
 @router.post("/login")
+@limiter.limit("5/minute")
 def login(
+    request: Request,
     form: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: SessionDep,
 ):
@@ -103,7 +117,8 @@ def login(
 
 
 @router.post("/auth/google")
-def google_login(data: GoogleLogin, session: SessionDep):
+@limiter.limit("10/minute")
+def google_login(request: Request, data: GoogleLogin, session: SessionDep):
     if not GOOGLE_CLIENT_ID:
         raise HTTPException(status_code=500, detail="Google login is not configured")
     try:

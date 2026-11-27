@@ -4,6 +4,7 @@ from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 
 from app.database import get_session
+from app.limiter import limiter
 from app.main import app
 
 
@@ -34,3 +35,10 @@ def sent_emails(monkeypatch):
         raising=False,
     )
     return sent
+
+
+@pytest.fixture(autouse=True)
+def reset_rate_limits():
+    # Every test client shares one address, so start each test with a clean
+    # rate-limit counter instead of inheriting hits from earlier tests.
+    limiter.reset()

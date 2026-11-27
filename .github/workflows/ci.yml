@@ -13,10 +13,35 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
     env:
       SECRET_KEY: ci-test-key-not-for-production-1234
+      DATABASE_URL: postgresql+psycopg://app:app@localhost:5432/app
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.4.0
       - run: uv sync --locked
+      - run: uv run alembic upgrade head
+      - run: uv run alembic check
       - run: uv run pytest
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.4.0
+      - run: uv sync --locked
+      - run: uv run --with pip-audit pip-audit
