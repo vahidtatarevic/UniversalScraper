@@ -27,7 +27,7 @@ def scrape(
     try:
         response = scrape_function(url, output)
     except UnsafeURLError:
-        raise HTTPException(status_code=400, detail="Url is not allowed.")
+        raise HTTPException(status_code=400, detail="URL is not allowed.")
     except RequestException:
         raise HTTPException(status_code=502, detail="Failed to fetch the page.")
     except (AttributeError, IndexError, ValueError, TypeError):
