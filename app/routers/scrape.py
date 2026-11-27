@@ -1,10 +1,11 @@
 from typing import Annotated, Literal
 
 from curl_cffi.requests.exceptions import RequestException
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 from app.auth import current_user
+from app.limiter import limiter
 from app.scrapers.base import scrape_function
 from app.scrapers.safety import UnsafeURLError
 
@@ -12,7 +13,9 @@ router = APIRouter()
 
 
 @router.get("/scrape")
+@limiter.limit("30/minute")
 def scrape(
+    request: Request,
     url: str,
     username: Annotated[str, Depends(current_user)],
     output: Literal["json", "html"] = "json",
