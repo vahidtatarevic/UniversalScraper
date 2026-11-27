@@ -1,0 +1,19 @@
+# Secrets and local data
+.env
+database.db
+
+# Virtual environment and caches
+.venv
+__pycache__
+.pytest_cache
+.ruff_cache
+
+# Tooling and version control
+.git
+.github
+.vscode
+.claude
+
+
+# Not needed to run the app
+tests
